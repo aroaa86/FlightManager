@@ -42,13 +42,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install cython buildozer
 
+      - name: Forçar Aceitação de Licenças da Google
+        run: |
+          # 1. Aceitar licenças no SDK global do sistema
+          yes | sdkmanager --licenses || true
+          
+          # 2. Criar pastas de licença locais para o Buildozer
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          
+          # 3. Injetar as assinaturas de licença aceites diretamente nos caminhos do Buildozer
+          echo -e "\n8933bad161d74778b1f5b0028a1265521346616e\nd56f5187479451eabf01fb743130245313541d83\n24333f1a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+
       - name: Build APK
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
         run: |
-          # Executa o Buildozer de forma isolada e segura
-          buildozer android debug
+          # Executa aceitando respostas interativas residuais
+          yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
