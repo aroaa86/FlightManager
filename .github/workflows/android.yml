@@ -19,14 +19,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Configurar Java 17
+      - name: Instalar Java 11 e 17 (Java 11 é obrigatório para o sdkmanager antigo)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
-
-      - name: Configurar Android SDK Oficial
-        uses: android-actions/setup-android@v3
+          java-version: |
+            11
+            17
 
       - name: Install Linux packages
         run: |
@@ -35,35 +34,44 @@ jobs:
             git zip unzip python3-pip autoconf libtool pkg-config \
             zlib1g-dev libncurses5-dev \
             libncursesw5-dev libtinfo6 cmake \
-            libffi-dev libssl-dev build-essential libstdc++6 aidl
+            libffi-dev libssl-dev build-essential libstdc++6 aidl curl
 
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install cython buildozer
 
-      - name: Estruturar Pastas, Atalhos e Licenças do Android SDK
+      - name: Preparar Android SDK Isolado com sdkmanager e Licenças
         run: |
-          # 1. Forçar a aceitação das licenças no SDK global do sistema
-          yes | sdkmanager --licenses || true
-          
-          # 2. Criar a estrutura interna de pastas que o Buildozer espera encontrar
+          # 1. Criar a pasta exata que o Buildozer vai gerir
           mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          
+          # 2. Descarregar os Command Line Tools oficiais da Google (versão estável compatível com Java 11)
+          curl -L -o cmd-tools.zip https://google.com
+          unzip -q cmd-tools.zip
+          
+          # 3. Organizar na estrutura que o Buildozer e o Android exigem (cmdline-tools/latest/bin)
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          mv cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          rm -rf cmdline-tools cmd-tools.zip
+
+          # 4. Criar o atalho (link simbólico) na pasta "tools" que o Buildozer procura ativamente
           mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
-          
-          # 3. Criar o atalho (link simbólico) do sdkmanager moderno para a pasta legado que o Buildozer lê
-          ln -s /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-          
-          # 4. Injetar as assinaturas de licença aceites diretamente na pasta do Buildozer
+          ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+
+          # 5. Injetar manualmente as assinaturas das licenças (garantia extra)
           echo -e "\n8933bad161d74778b1f5b0028a1265521346616e\nd56f5187479451eabf01fb743130245313541d83\n24333f1a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
+          # 6. Forçar a aceitação interativa de todas as licenças usando o Java 11 antes do Buildozer rodar
+          export JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-amd64
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses || true
+
       - name: Build APK
         env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
+          # Força o uso do Java 11 para que os subcomandos do sdkmanager do Buildozer não quebrem com a licença 37
+          JAVA_HOME: /usr/lib/jvm/temurin-11-jdk-amd64
         run: |
-          # Executa o buildozer diretamente (o "yes |" foi removido pois causava o Broken Pipe com o validador interno)
           buildozer android debug
 
       - name: Upload APK
