@@ -16,13 +16,13 @@ jobs:
 
       - name: Compilar APK usando Docker Oficial do Buildozer
         run: |
-          # Cria a pasta .buildozer localmente para o mapeamento do volume
           mkdir -p .buildozer
           
-          # Executa o contentor oficial com as permissões corretas de escrita
+          # Executa o contentor passando a variável que autoriza rodar como root
           docker run --rm \
             -v ${{ github.workspace }}:/home/user/hostdir \
             -v ${{ github.workspace }}/.buildozer:/home/user/.buildozer \
+            -e _BUILDOZER_ALLOW_KIVY_BUILD_FROM_ROOT=1 \
             kivy/buildozer:latest \
             android debug
 
