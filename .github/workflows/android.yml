@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y \
-            git zip unzip openjdk-17-jdk \
+            git zip unzip openjdk-17-jdk openjdk-11-jdk \
             python3-pip autoconf libtool pkg-config \
             zlib1g-dev libncurses5-dev \
             libncursesw5-dev libtinfo6 cmake \
@@ -34,21 +34,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install cython buildozer
 
-      - name: Pre-download Android SDK and Accept Licenses
+      - name: Pre-download Android SDK Tools and Accept Licenses
         run: |
-          # 1. Criar a estrutura correta de diretórios que o Buildozer espera
+          # 1. Criar a estrutura completa de pastas do SDK
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
           mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
           
-          # 2. Descarregar os binários originais do sdkmanager da Google (ferramenta legado esperada pelo Buildozer)
-          curl -L -o sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
-          unzip -q sdk-tools.zip -d ~/.buildozer/android/platform/android-sdk/
-          rm sdk-tools.zip
+          # 2. Descarregar a versão mais recente e estável das ferramentas de linha de comando da Google
+          curl -L -o cmd-tools.zip https://google.com
+          unzip -q cmd-tools.zip
+          
+          # 3. Mover para o local correto onde o Buildozer e o Android esperam encontrar
+          mv cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+          rm -rf cmdline-tools cmd-tools.zip
 
-          # 3. Injetar os hashes das licenças na pasta que acabámos de popular
+          # 4. Criar também um link simbólico para a pasta legado "tools", prevenindo falhas de retrocompatibilidade
+          mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
+          ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+
+          # 5. Injetar todas as licenças modernas necessárias da Google
           echo -e "\n8933bad161d74778b1f5b0028a1265521346616e\nd56f5187479451eabf01fb743130245313541d83\n24333f1a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
       - name: Build APK
+        env:
+          # Força o Buildozer a usar o Java 11 durante a compilação para garantir compatibilidade total com o SDK
+          JAVA_HOME: /usr/lib/jvm/temurin-11-jdk-amd64
         run: |
           buildozer android debug
 
