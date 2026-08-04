@@ -62,6 +62,10 @@ fullscreen = 1
 # Android
 # ---------------------------------------------------------------------
 
+# Aceitar todas as licenças do Android SDK automaticamente
+android.accept_sdk_license = True
+android.skip_update = False
+
 android.api = 34
 
 android.minapi = 24
@@ -79,6 +83,8 @@ android.enable_androidx = True
 android.debug_artifact = apk
 
 android.release_artifact = apk
+
+android.build_tools_version = 35.0.0
 
 #
 # Sem permissões por enquanto
