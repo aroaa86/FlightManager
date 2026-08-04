@@ -30,6 +30,15 @@ jobs:
             ~/.buildozer
           key: buildozer-${{ runner.os }}
 
+      - name: Aceitar Licenças do Android SDK e Instalar Dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libstdc++6 aidl
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | sdkmanager --licenses || true
+
+
       - name: Install Linux packages
         run: |
           sudo apt update
