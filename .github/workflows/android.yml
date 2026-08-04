@@ -2,55 +2,22 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-
   push:
     branches:
       - main
 
 jobs:
   build:
-
     runs-on: ubuntu-24.04
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Cache Buildozer
-        uses: actions/cache@v4
-        with:
-          path: |
-            .buildozer
-            ~/.buildozer
-          key: buildozer-${{ runner.os }}
-
-      - name: Aceitar Licenças do Android SDK e Instalar Dependências
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libstdc++6 aidl
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          yes | sdkmanager --licenses || true
-
-      - name: Instalar Dependências e Forçar Licenças do Android SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libstdc++6 aidl python3-pip
-          
-          # Criar as pastas do SDK do Buildozer antes que ele comece
-          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-          
-          # Injetar os hashes das licenças da Google diretamente nos ficheiros
-          echo -e "\n8933bad161d74778b1f5b0028a1265521346616e\nd56f5187479451eabf01fb743130245313541d83\n24333f1a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-     
-      
+          python-version: "3.11" # Python 3.11 é mais estável com Cython/Buildozer atual
 
       - name: Install Linux packages
         run: |
@@ -60,13 +27,21 @@ jobs:
             python3-pip autoconf libtool pkg-config \
             zlib1g-dev libncurses5-dev \
             libncursesw5-dev libtinfo6 cmake \
-            libffi-dev libssl-dev
+            libffi-dev libssl-dev build-essential libstdc++6 aidl
 
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
-          pip install buildozer cython
-          pip install -r requirements.txt
+          pip install cython buildozer
+
+      - name: Pre-accept Android SDK Licenses
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          # Criar pasta de licenças que o Buildozer vai ler
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "\n8933bad161d74778b1f5b0028a1265521346616e\nd56f5187479451eabf01fb743130245313541d83\n24333f1a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
       - name: Build APK
         run: |
