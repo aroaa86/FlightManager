@@ -37,7 +37,8 @@ jobs:
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
           yes | sdkmanager --licenses || true
-
+      
+      
 
       - name: Install Linux packages
         run: |
