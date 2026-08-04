@@ -1,0 +1,945 @@
+<Button>:
+    font_size: '17sp'
+    color: 0.3, 0.6, 0.7, 1
+    size_hint: '0.11sp', '0.07sp'
+    #background_normal: ''
+    #canvas.before:
+        #Color:
+            #rgba: self.color
+        #RoundedRectangle:
+            #size: self.width+20, self.height
+            #pos: self.pos
+            #radius:[20,2,20,2]
+
+WindowManager:
+    MainWindow:
+    SecondWindow:
+    ThirdWindow:
+    FourthWindow:
+    FifthWindow:
+
+<MainWindow>:
+    name: "Flight Plan"
+
+    FloatLayout:
+        cols: 1
+        canvas.before:
+            Color:
+                rgba: 0.3, 0.6, 0.7, 0.2
+            RoundedRectangle:
+                size: self.width, self.height/5
+                pos: self.pos
+                radius:[40,40,0,0]
+
+        FloatLayout:
+            rows: 2
+            Image:
+                source: 'ma60-f.jpg'
+                size_hint: '0.70sp', '0.85sp'
+                pos_hint:{"x": 0.07, "y": 0.07}
+
+            Label:
+                text: "BEM VINDO AO SEU GESTOR DE VOO"
+                font_name: "impact"
+                font_size: 35
+                size_hint: 0.8, 0.1
+                pos_hint: {"x":0.1, "top":0.95}
+
+        FloatLayout:
+            cols: 3
+
+            Button:
+                pos_hint: {"x":0.09, "y":0.05, "bottom":0.8}
+                text: "Procurar"
+                on_release:
+                    app.root.current = "procurar"
+                    root.manager.transition.direction = "left"
+            Button:
+                pos_hint: {"x":0.27, "y":0.05, "bottom":0.8}
+                text: "Iniciar"
+                on_release:
+                    app.root.current = "voo"
+                    root.manager.transition.direction = "left"
+            Button:
+                pos_hint: {"x":0.62, "y":0.05, "bottom":0.8}
+                text: "Novo"
+                on_release:
+                    app.root.current = "New Plan"
+                    root.manager.transition.direction = "left"
+            Button:
+                pos_hint: {"x":0.80, "y":0.05, "bottom":0.8}
+                text: "Sair"
+                on_release:
+                    app.root.get_screen('Flight Plan').sair(root)
+
+<SecondWindow>:
+    name: "New Plan"
+
+    partida: partida
+    destino: destino
+    mea: mea
+    msa: msa
+    nivelDeTransicao: nivelDeTransicao
+    altitudeDeTransicao: altitudeDeTransicao
+    radialRumo: radialRumo
+    nivelDeVoo: nivelDeVoo
+    aeronave: aeronave
+
+    FloatLayout:
+        cols: 1
+
+        FloatLayout:
+            cols: 2
+
+            Label:
+                text: "Aeronave"
+                size_hint: '0.30sp', '0.18sp'
+                pos_hint: {"x": 0.09, "top": 0.43}
+
+            Label:
+                text: "MEA"
+                size_hint: '0.32sp', '0.18sp'
+                pos_hint: {"x": 0.09, "top": 0.53}
+
+            Label:
+                text: "MSA"
+                size_hint: '0.31sp', '0.18sp'
+                pos_hint: {"x": 0.44, "top": 0.53}
+
+            Label:
+                text: "Niv. transição"
+                size_hint: '0.31sp', '0.18sp'
+                pos_hint: {"x": 0.41, "top": 0.63}
+
+            Label:
+                text: "Alt. transição"
+                size_hint: 0.32, 0.18
+                pos_hint: {"x": 0.1, "top": 0.61}
+
+            Label:
+                text: "Radial/Rumo"
+                size_hint: 0.31, 0.18
+                pos_hint: {"x": 0.45, "top": 0.71}
+
+            Label:
+                text: "Nível de voo"
+                size_hint: 0.32, 0.18
+                pos_hint: {"x": 0.1, "top": 0.71}
+
+            Label:
+                text: "AD de chegada"
+                size_hint: 0.3, 0.2
+                pos_hint: {"x": 0.1, "top": 0.84}
+
+            Label:
+                text: "AD de partida"
+                size_hint: 0.31, 0.18
+                pos_hint: {"x": 0.1, "top": 0.95}
+
+            TextInput:
+                id: aeronave
+                size_hint: 0.5, 0.07
+                pos_hint: {"x": 0.32, "top":0.35}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: T-270"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: mea
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.32, "top": 0.46}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 9000"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: msa
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.67, "top": 0.46}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 2500"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: nivelDeTransicao
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.67, "top": 0.56}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 120"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: altitudeDeTransicao
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.32, "top": 0.56}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 10000"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: radialRumo
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.67, "top": 0.66}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 270"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: nivelDeVoo
+                size_hint: 0.15, 0.07
+                pos_hint: {"x": 0.32, "top": 0.66}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: 280"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: destino
+                size_hint: 0.5, 0.07
+                pos_hint: {"x": 0.32, "top": 0.78}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: fnmo"
+                padding: [10, (self.height-self.line_height)/2]
+
+            TextInput:
+                id: partida
+                size_hint: 0.5, 0.07
+                pos_hint: {"x": 0.32, "top":0.9}
+                font_size: 25
+                multiline: False
+                hint_text: "Ex.: fnlu"
+                padding: [10, (self.height-self.line_height)/2]
+
+        FloatLayout:
+            cols: 2
+
+            Button:
+                pos_hint: {"x":0.18, "y":0.1, "bottom":0.8}
+                text: "Voltar"
+                on_release:
+                    app.root.current = "Flight Plan"
+                    root.manager.transition.direction = "right"
+
+            Button:
+                pos_hint: {"x":0.70, "y":0.1, "bottom":0.8}
+                text: "Avançar"
+                on_release:
+                    root.avancar()
+                    app.root.current = "Waypoints"
+                    root.manager.transition.direction = "left"
+
+<ThirdWindow>:
+    name: "Waypoints"
+
+    wypt: wypt
+    estima: estima
+    lista:lista
+
+    FloatLayout:
+        cols: 1
+
+        Label:
+            text: "INSERIR WAYPOINT"
+            size_hint: 0.75, 0.2
+            pos_hint: {"x":0.14, "top":1.05}
+
+    FloatLayout:
+        cols: 2
+
+        Label:
+            id: lista
+            text: "Waypoint"
+            size_hint: 0.054, 0.2
+            pos_hint: {"x": 0.050, "top": 0.96}
+
+        TextInput:
+            id: wypt
+            size_hint: 0.5, 0.07
+            pos_hint: {"x": 0.12, "top": 0.9}
+            font_size: 25
+            multiline: False
+            hint_text: "Ex.: liram"
+            padding: [10, (self.height-self.line_height)/2]
+
+        Label:
+            text: "Estima"
+            size_hint: 0.63, 0.2
+            pos_hint: {"x": 0.36, "top": 0.96}
+
+        #MDTextField:
+        TextInput:
+            hint_text: "Tempo em minutos"
+            id: estima
+            size_hint: 0.2, 0.07
+            pos_hint: {"x": 0.708, "top": 0.9}
+            font_size: 25
+            multiline: False
+            hint_text: "Ex.: 30"
+            padding: [10, (self.height-self.line_height)/2]
+
+        Button:
+            text:"+"
+            size_hint: 0.065, 0.065
+            pos_hint: {"x": 0.92, "top": 0.895}
+            on_release:
+                root.add_waypoint()
+
+    BoxLayout:
+        ScrollView:
+            size_hint_y: 0.6
+            pos_hint: {"x": 0.5, "top": 0.80}
+            GridLayout:
+                padding: [10]
+                cols: 1
+                id: box
+                orientation: 'lr-tb'
+                size_hint_y: 2
+
+    FloatLayout:
+        cols: 2
+
+        Button:
+            pos_hint: {"x":0.18, "y":0.1, "bottom":0.8}
+            text: "Voltar"
+            on_release:
+                app.root.current = "New Plan"
+                root.manager.transition.direction = "right"
+
+        Button:
+            pos_hint: {"x":0.70, "y":0.1, "bottom":0.8}
+            text: "Avançar"
+            on_release:
+                root.avancar()
+                app.root.current = "voo"
+                root.manager.transition.direction = "left"
+
+
+<FourthWindow>:
+    name: "voo"
+
+    arranque:arranque
+    descolagem:descolagem
+    aterragem:aterragem
+    corte:corte
+    rota:rota
+    min_enrout:min_enrout
+    flt_level:flt_level
+    min_sec:min_sec
+    hdg:hdg
+    alt_trans:alt_trans
+    via:via
+    niv_trans:niv_trans
+    fltime:fltime
+    blktime:blktime
+
+    FloatLayout:
+        cols: 1
+
+        Label:
+            id: rota
+            pos_hint: {"x":0.05, "y":0.42}
+            text: ''
+            font_size: 45
+
+        GridLayout:
+            cols:1
+            orientation: 'lr-tb'
+            padding: [75, 75]
+            spacing: 30
+
+            GridLayout:
+                id: box2
+                spacing: 120
+                cols: 1
+                size_hint_y: None
+                padding: [45, 50]
+                orientation: 'lr-tb'
+
+        GridLayout:
+            cols:1
+            orientation: 'lr-tb'
+            padding: [75, 225]
+            spacing: 30
+
+            GridLayout:
+                id: box2_1
+                spacing: 120
+                cols: 1
+                size_hint_y: None
+                padding: [45, 10]
+                orientation: 'lr-tb'
+
+        GridLayout:
+            cols:1
+            orientation: 'lr-tb'
+            padding: [75, 375]
+            spacing: 30
+
+            GridLayout:
+                id: box2_2
+                spacing: 120
+                cols: 1
+                size_hint_y: None
+                padding: [45, 10]
+                orientation: 'lr-tb'
+
+        GridLayout:
+            cols:1
+            orientation: 'lr-tb'
+            padding: [75, 525]
+            spacing: 30
+
+            GridLayout:
+                id: box2_3
+                spacing: 120
+                cols: 1
+                size_hint_y: None
+                padding: [45, 10]
+                orientation: 'lr-tb'
+
+        Button:
+            text:"START"
+            id: arranque
+            size_hint: 0.25, 0.10
+            pos_hint: {"x":0.05, "y":0.85}
+            on_release:
+                root.hora_start()
+
+        Button:
+            text:"DESCOLAGEM"
+            id: descolagem
+            size_hint: 0.25, 0.10
+            pos_hint: {"x":0.05, "y":0.65}
+            on_release:
+                root.hora_descolagem()
+
+        Button:
+            text:"ATERRAGEM"
+            id: aterragem
+            size_hint: 0.25, 0.10
+            pos_hint: {"x":0.05, "y":0.45}
+            on_release:
+                root.hora_aterragem()
+
+        Button:
+            text:"CORTE"
+            id: corte
+            size_hint: 0.25, 0.10
+            pos_hint: {"x":0.05, "y":0.25}
+            on_release:
+                root.hora_corte()
+
+    BoxLayout:
+        rows: 2
+        size_hint_x: 0.3
+        size_hint_y: None
+        pos_hint: {"x":0.35, "y":0.58}
+        spacing: 40
+        orientation: 'vertical'
+
+        Label:
+            id: hdg
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+        Label:
+            id: flt_level
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+        Label:
+            id: min_enrout
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+        Label:
+            id: min_sec
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+
+    BoxLayout:
+        rows: 2
+        size_hint_x: 0.3
+        size_hint_y: None
+        pos_hint: {"x":0.60, "y":0.66}
+        spacing: 40
+        orientation: 'vertical'
+
+        Label:
+            id: via
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+        Label:
+            id: alt_trans
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+        Label:
+            id: niv_trans
+            text: ''
+            font_size: 18
+            size_hint: None, None
+            size: self.texture_size
+
+    BoxLayout:
+        pos_hint: {"x":0.77, "y":0.10}
+        ScrollView:
+            size_hint_y: 0.4
+            size_hint_x: 0.0
+            width: 165
+            adaptive_height: True
+            pos_hint: {"x": 0.5, "top": 0.70}
+            GridLayout:
+                cols: 1
+                id: cx
+                orientation: 'lr-tb'
+                size_hint_y: 3
+
+    Label:
+        text: 'ESTIMAS'
+        pos_hint: {"x": 0.36, "y": 0.34}
+
+    GridLayout:
+        rows: 1
+        size_hint_x: 0.1
+        size_hint_y: 0.12
+        spacing: 250
+        pos_hint: {"x":0.46, "y":0.25}
+
+        Label:
+            id: fltime
+            text: ''
+
+        Label:
+            id: blktime
+            text: ''
+
+    Button:
+        pos_hint: {"x":0.050, "y":0.05, "bottom":0.8}
+        text: "INICIO"
+        on_release:
+            app.root.current = "Flight Plan"
+            root.manager.transition.direction = "right"
+            root.ids.box2.clear_widgets(children=None)
+            root.ids.box2_1.clear_widgets(children=None)
+            root.ids.box2_2.clear_widgets(children=None)
+            root.ids.box2_3.clear_widgets(children=None)
+            root.ids.cx.clear_widgets(children=None)
+
+    Button:
+        pos_hint: {"x":0.20, "y":0.05, "bottom":0.8}
+        text: "FECHAR"
+        on_release:
+            #app.stop()
+            app.root.get_screen('Flight Plan').sair(root)
+
+<FifthWindow>:
+    name: "procurar"
+
+    posicao:posicao
+
+    FloatLayout:
+        cols: 1
+
+        TextInput:
+            id: posicao
+            size_hint: 0.5, 0.069
+            pos_hint: {"x": 0.050, "top": 0.9}
+            font_size: 20
+            multiline: False
+            hint_text: "Ex.: fnlu, T-270"
+            padding: [10, (self.height-self.line_height)/2]
+
+        Button:
+            pos_hint: {"x":0.58, "top":0.90}
+            size_hint_y: 0.07
+            text: "Procurar"
+            on_release:
+                root.ids.bx.clear_widgets(children=None)
+                root.procura_detalhada()
+
+        Button:
+            pos_hint: {"x":0.75, "top":0.90}
+            size_hint_y: 0.07
+            text: "Listar todos"
+            on_release:
+                root.ids.bx.clear_widgets(children=None)
+                root.procurar_todos()
+
+        BoxLayout:
+            cols: 1
+            size_hint: 1, 1
+            padding:[20]
+            ScrollView:
+                size_hint_y: 0.6
+                size_hint_x: 1
+                pos_hint: {"x":0.03, "top": 0.80}
+                GridLayout:
+                    id: bx
+                    cols: 1
+                    orientation: 'lr-tb'
+                    # size_hint_x: None
+                    # size_hint_x: 1.5
+                    size_hint_y: 5
+
+        Button:
+            pos_hint: {"x":0.060, "y":0.09}
+            text: "VOLTAR"
+            on_release:
+                app.root.current = "Flight Plan"
+                root.manager.transition.direction = "right"
+                root.ids.bx.clear_widgets(children=None)
+
+
+<Rota>:
+    label: label
+    eta: eta
+
+    cols:3
+
+    size_hint_y:None
+    height:50
+
+    Label:
+        id:label
+        #size_hint_x: 0.010
+        font_size: 20
+
+    Label:
+        id:eta
+        #size_hint_x: None
+        font_size: 20
+
+    Button:
+        text:"x"
+        size_hint: 0.5, 0.7
+        pos_hint: {"x": 0.92, "top": 0.85}
+        on_release:
+            #app.root.get_screen('Waypoints').ids.box.remove_widget(root)
+            app.root.get_screen('Waypoints').remover_waypoint(root)
+
+
+<MostraProcura>:
+    data: data
+    aeronave: aeronave
+    partida: partida
+    chegada: chegada
+    radial: radial
+    nivel_v: nivel_v
+    nivel_t: nivel_t
+    alt_t: alt_t
+    msa: msa
+    mea: mea
+    est: est
+    id_voo: id_voo
+
+    cols:1
+
+    size_hint_y:None
+    height:75
+    padding:[20]
+
+    canvas.before:
+        Color:
+            rgba: 0.2, 0.2, 0.2, 0.8
+        RoundedRectangle:
+            pos: self.pos
+            size: 950, 65
+            radius: [15]
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 50
+            padding: [-10]
+
+            Button:
+                id: data
+                text: root.data.text if root.data.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: aeronave
+                text: root.aeronave.text if root.aeronave.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: partida
+                text: root.partida.text if root.partida.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: chegada
+                text: root.chegada.text if root.chegada.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: radial
+                text: root.radial.text if root.radial.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: nivel_v
+                text: root.nivel_v.text if root.nivel_v.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: nivel_t
+                text: root.nivel_t.text if root.nivel_t.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: alt_t
+                text: root.alt_t.text if root.alt_t.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: msa
+                text: root.msa.text if root.msa.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: mea
+                text: root.mea.text if root.mea.text else ''
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+            Button:
+                id: id_voo
+                text: root.id_voo.text if root.id_voo.text else ''
+                opacity: 0  # torna o botão invisível
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [-10]
+
+            Button:
+                id: est
+                text: root.est.text if root.est.text else ''
+                font_size: 16
+                size_hint: None, None
+                size: self.texture_size
+                background_color: 0,0,0,0
+                color: 1,1,1,1
+                on_release: root.editar_dados()
+
+<ListaProcura>:
+    data: data
+    acft: acft
+    dep: dep
+    arr: arr
+    fl: fl
+    rad: rad
+    alt_trans: alt_trans
+    niv_trans: niv_trans
+    min_enrout: min_enrout
+    min_safe: min_safe
+    estimas: estimas
+
+    cols:1
+
+    size_hint_y:None
+    height:70
+    padding:[20]
+
+    canvas.before:
+        Color:
+            rgba: 0, 0.9, 0, 0.6
+        RoundedRectangle:
+            pos: self.pos
+            size: 950, 65
+            radius: [15]
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 45
+            padding: [-10]
+
+            Label:
+                id:data
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:acft
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:dep
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:arr
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:fl
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:rad
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:alt_trans
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:niv_trans
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:min_enrout
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+            Label:
+                id:min_safe
+                font_size: 18
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [-10]
+
+            Label:
+                id:estimas
+                font_size: 16
+                size_hint: None, None
+                size: self.texture_size
+                bold: True
+
+<Pontos>:
+    pto: pto
+    temp: temp
+
+    cols:2
+
+    size_hint_y:None
+    size_hint_x:None
+    height:35
+    width: 150
+
+    Label:
+        id:pto
+        font_size: 20
+
+    Label:
+        id:temp
+        font_size: 20
+
+<Relogio>:
+    cronometro: cronometro
+
+    cols:1
+
+    Label:
+        id: cronometro
+        size_hint_x: None
+        font_size: 20
