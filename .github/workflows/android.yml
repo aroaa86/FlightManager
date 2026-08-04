@@ -2,29 +2,62 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout Código
+
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Compilar APK usando Docker Oficial do Buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Buildozer
+        uses: actions/cache@v4
+        with:
+          path: |
+            .buildozer
+            ~/.buildozer
+          key: buildozer-${{ runner.os }}
+
+      - name: Aceitar Licenças do Android SDK e Instalar Dependências
         run: |
-          mkdir -p .buildozer
-          
-          # Executa o contentor passando a variável que autoriza rodar como root
-          docker run --rm \
-            -v ${{ github.workspace }}:/home/user/hostdir \
-            -v ${{ github.workspace }}/.buildozer:/home/user/.buildozer \
-            -e _BUILDOZER_ALLOW_KIVY_BUILD_FROM_ROOT=1 \
-            kivy/buildozer:latest \
-            android debug
+          sudo apt-get update
+          sudo apt-get install -y build-essential libstdc++6 aidl
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | sdkmanager --licenses || true
+
+
+      - name: Install Linux packages
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            git zip unzip openjdk-17-jdk \
+            python3-pip autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev \
+            libncursesw5-dev libtinfo6 cmake \
+            libffi-dev libssl-dev
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install buildozer cython
+          pip install -r requirements.txt
+
+      - name: Build APK
+        run: |
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
