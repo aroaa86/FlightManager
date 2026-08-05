@@ -1,83 +1,82 @@
-name: Build Kivy Android APK
+name: Build Android APK
 
 on:
+  workflow_dispatch:
+
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
 jobs:
-  build-android:
-    runs-on: ubuntu-latest
+  build:
+
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout code
+
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java (for Android SDK)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.12"
 
-      - name: Install system dependencies
+      - name: Cache Buildozer
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.buildozer
+            .buildozer
+          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-${{ runner.os }}
+
+      - name: Install Linux dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git python3-pip build-essential python3-dev \
-            ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
-            libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev \
-            libgstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-            autoconf automake libtool pkg-config libltdl-dev libffi-dev libssl-dev \
-            cmake unzip wget
+          sudo apt update
 
-      - name: Install Python dependencies
+          sudo apt install -y \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            build-essential \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo6 \
+            libltdl-dev \
+            libstdc++6 \
+            ccache
+
+      - name: Install Python packages
         run: |
-          python3 -m pip install --upgrade pip setuptools wheel
-          pip install --upgrade Cython==0.29.33 buildozer==1.5.0
-          pip install "sh>=2,<3"
+          python -m pip install --upgrade pip wheel setuptools
 
-      - name: Configure Android SDK environment
-        run: |
-          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          
-          sudo mkdir -p $ANDROID_HOME/tools/bin
-          sudo ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
-          sudo ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager $ANDROID_HOME/tools/bin/avdmanager
-          
-          yes | sdkmanager --licenses
+          pip install \
+            Cython==0.29.37 \
+            buildozer==1.5.0
 
-      - name: Build Android APK with Buildozer
+          pip install -r requirements.txt
+
+      - name: Build APK
         env:
-          SHELL: /bin/bash
-          CONFIG_SHELL: /bin/bash
-          MAKEFLAGS: -j1
-          BUILDOZER_WARN_ON_ROOT: 0
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
+          ANDROIDAPI: 34
+          ANDROIDMINAPI: 24
         run: |
-          mkdir -p ~/.buildozer
-          chmod -R 777 ~/.buildozer
-          
-          # Limpar caches antigos se houver
-          rm -rf .buildozer
-          
-          # Executa o Buildozer com mais debug para ver o erro real
           buildozer -v android debug
 
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: .buildozer/android/platform/build-*/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          name: GestorDeVoo-APK
+          path: bin/*.apk
