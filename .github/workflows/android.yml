@@ -14,26 +14,26 @@ jobs:
 
     steps:
 
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       # 1. Obter o projeto
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
 
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       # 2. Python
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
 
-      # ---------------------------------------------------------
-      # 3. Pacotes Linux necessários
-      # ---------------------------------------------------------
-      - name: Install Linux packages
+      # ------------------------------------------------------------
+      # 3. Dependências Linux
+      # ------------------------------------------------------------
+      - name: Install Linux dependencies
         run: |
           sudo apt-get update
 
@@ -44,6 +44,7 @@ jobs:
             openjdk-17-jdk \
             python3-pip \
             autoconf \
+            automake \
             libtool \
             pkg-config \
             zlib1g-dev \
@@ -53,105 +54,64 @@ jobs:
             cmake \
             libffi-dev \
             libssl-dev \
-            build-essential
+            build-essential \
+            libstdc++6 \
+            libcairo2-dev \
+            libfreetype6-dev \
+            libjpeg-dev \
+            libpng-dev
 
 
-      # ---------------------------------------------------------
-      # 4. Python packages
-      # ---------------------------------------------------------
-      - name: Install Python packages
+      # ------------------------------------------------------------
+      # 4. Instalar Buildozer
+      # ------------------------------------------------------------
+      - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
-
-          pip install \
-            buildozer \
-            cython==0.29.37
-
-          pip install -r requirements.txt
+          python -m pip install buildozer
+          python -m pip install "cython==0.29.37"
 
 
-      # ---------------------------------------------------------
-      # 5. Verificar versões
-      # ---------------------------------------------------------
-      - name: Check environment
+      # ------------------------------------------------------------
+      # 5. Aceitar licenças Android
+      # ------------------------------------------------------------
+      - name: Accept Android SDK licenses
         run: |
-          echo "===== PYTHON ====="
-          python --version
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
 
-          echo "===== BUILDOZER ====="
-          buildozer --version
-
-          echo "===== CYTHON ====="
-          cython --version
-
-          echo "===== JAVA ====="
-          java -version
-
-          echo "===== BUILDOSER SPEC ====="
-          cat buildozer.spec
+          if [ -f "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          fi
 
 
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       # 6. Cache do Buildozer
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
       - name: Cache Buildozer
         uses: actions/cache@v4
         with:
           path: |
             .buildozer
             ~/.buildozer
-          key: buildozer-${{ runner.os }}-api34-ndk27b-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-${{ runner.os }}-
 
 
-      # ---------------------------------------------------------
-      # 7. Preparar Android SDK
-      # ---------------------------------------------------------
-      - name: Prepare Android environment
-        run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-
-
-      # ---------------------------------------------------------
-      # 8. Aceitar licenças Android
-      # ---------------------------------------------------------
-      - name: Accept Android SDK licenses
-        run: |
-          yes | sdkmanager --licenses || true
-
-
-      # ---------------------------------------------------------
-      # 9. Build APK
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
+      # 7. Construir APK
+      # ------------------------------------------------------------
       - name: Build APK
         run: |
           buildozer -v android debug
 
 
-      # ---------------------------------------------------------
-      # 10. Listar arquivos gerados
-      # ---------------------------------------------------------
-      - name: Show build results
-        if: always()
-        run: |
-          echo "===== BIN ====="
-          ls -lah bin || true
-
-          echo "===== BUILDOZER ====="
-          find .buildozer -maxdepth 4 -type f \
-            \( -name "*.apk" -o -name "*.log" \) \
-            -print || true
-
-
-      # ---------------------------------------------------------
-      # 11. Guardar APK
-      # ---------------------------------------------------------
+      # ------------------------------------------------------------
+      # 8. Disponibilizar APK
+      # ------------------------------------------------------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GestorDeVoo-APK
           path: bin/*.apk
-          if-no-files-found: error
