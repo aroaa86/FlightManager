@@ -66,11 +66,11 @@ fullscreen = 1
 android.accept_sdk_license = True
 android.skip_update = False
 
-android.api = 34
+android.api = 33
 
 android.minapi = 24
 
-android.ndk = 27b
+android.ndk = 25b
 
 android.ndk_api = 24
 
