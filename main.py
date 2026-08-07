@@ -836,7 +836,7 @@ class FlightManager(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = 'Dark'
-        return kv
+        return Builder.load_file("my.kv")
 
 
 if __name__ == "__main__":
