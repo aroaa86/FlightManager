@@ -827,7 +827,7 @@ class WindowManager(ScreenManager):
     pass
 
 
-# kv = Builder.load_file("my.kv")
+kv = Builder.load_file("my.kv")
 
 
 class FlightManager(MDApp):
@@ -836,7 +836,7 @@ class FlightManager(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = 'Dark'
-        return Builder.load_file("my.kv")
+        return kv
 
 
 if __name__ == "__main__":

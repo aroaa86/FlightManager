@@ -14,69 +14,144 @@ jobs:
 
     steps:
 
-      - name: Checkout repository
+      # ---------------------------------------------------------
+      # 1. Obter o projeto
+      # ---------------------------------------------------------
+      - name: Checkout
         uses: actions/checkout@v4
 
+
+      # ---------------------------------------------------------
+      # 2. Python
+      # ---------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Cache Buildozer
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.buildozer
-            .buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-${{ runner.os }}
 
-      - name: Install Linux dependencies
+      # ---------------------------------------------------------
+      # 3. Pacotes Linux necessários
+      # ---------------------------------------------------------
+      - name: Install Linux packages
         run: |
-          sudo apt update
+          sudo apt-get update
 
-          sudo apt install -y \
+          sudo apt-get install -y \
             git \
             zip \
             unzip \
             openjdk-17-jdk \
+            python3-pip \
             autoconf \
-            automake \
             libtool \
             pkg-config \
-            build-essential \
-            cmake \
-            libffi-dev \
-            libssl-dev \
             zlib1g-dev \
             libncurses5-dev \
             libncursesw5-dev \
             libtinfo6 \
-            libltdl-dev \
-            libstdc++6 \
-            ccache
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            build-essential
 
+
+      # ---------------------------------------------------------
+      # 4. Python packages
+      # ---------------------------------------------------------
       - name: Install Python packages
         run: |
-          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install --upgrade pip
 
           pip install \
-            Cython==0.29.37 \
-            buildozer==1.5.0
+            buildozer \
+            cython==0.29.37
 
           pip install -r requirements.txt
 
+
+      # ---------------------------------------------------------
+      # 5. Verificar versões
+      # ---------------------------------------------------------
+      - name: Check environment
+        run: |
+          echo "===== PYTHON ====="
+          python --version
+
+          echo "===== BUILDOZER ====="
+          buildozer --version
+
+          echo "===== CYTHON ====="
+          cython --version
+
+          echo "===== JAVA ====="
+          java -version
+
+          echo "===== BUILDOSER SPEC ====="
+          cat buildozer.spec
+
+
+      # ---------------------------------------------------------
+      # 6. Cache do Buildozer
+      # ---------------------------------------------------------
+      - name: Cache Buildozer
+        uses: actions/cache@v4
+        with:
+          path: |
+            .buildozer
+            ~/.buildozer
+          key: buildozer-${{ runner.os }}-api34-ndk27b-${{ hashFiles('buildozer.spec') }}
+
+
+      # ---------------------------------------------------------
+      # 7. Preparar Android SDK
+      # ---------------------------------------------------------
+      - name: Prepare Android environment
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+
+      # ---------------------------------------------------------
+      # 8. Aceitar licenças Android
+      # ---------------------------------------------------------
+      - name: Accept Android SDK licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+
+      # ---------------------------------------------------------
+      # 9. Build APK
+      # ---------------------------------------------------------
       - name: Build APK
-        env:
-          ANDROIDAPI: 34
-          ANDROIDMINAPI: 24
         run: |
           buildozer -v android debug
 
+
+      # ---------------------------------------------------------
+      # 10. Listar arquivos gerados
+      # ---------------------------------------------------------
+      - name: Show build results
+        if: always()
+        run: |
+          echo "===== BIN ====="
+          ls -lah bin || true
+
+          echo "===== BUILDOZER ====="
+          find .buildozer -maxdepth 4 -type f \
+            \( -name "*.apk" -o -name "*.log" \) \
+            -print || true
+
+
+      # ---------------------------------------------------------
+      # 11. Guardar APK
+      # ---------------------------------------------------------
       - name: Upload APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: GestorDeVoo-APK
           path: bin/*.apk
+          if-no-files-found: error
