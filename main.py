@@ -827,7 +827,7 @@ class WindowManager(ScreenManager):
     pass
 
 
-kv = Builder.load_file("my.kv")
+# kv = Builder.load_file("my.kv")
 
 
 class FlightManager(MDApp):
