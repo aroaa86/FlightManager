@@ -32,6 +32,7 @@ jobs:
             autoconf \
             automake \
             libtool \
+            libtool-bin \
             pkg-config \
             cmake \
             libffi-dev \
