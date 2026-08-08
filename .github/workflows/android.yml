@@ -2,55 +2,92 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
 
 jobs:
   build:
+
     runs-on: ubuntu-24.04
 
     steps:
+
+      # ------------------------------------------------------------
+      # 1. Obter o projeto
+      # ------------------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
 
+      # ------------------------------------------------------------
+      # 2. Python
+      # ------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
+
+      # ------------------------------------------------------------
+      # 3. Dependências Linux
+      # ------------------------------------------------------------
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
+
           sudo apt-get install -y \
-            git zip unzip build-essential python3-dev \
-            autoconf automake libtool pkg-config zlib1g-dev \
-            libncurses5-dev libncursesw5-dev libtinfo6 cmake \
-            libffi-dev libssl-dev libltdl-dev
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            python3-pip \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo6 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            build-essential \
+            libstdc++6 \
+            libcairo2-dev \
+            libfreetype6-dev \
+            libjpeg-dev \
+            libpng-dev
 
-      - name: Install Buildozer & Dependencies
+
+      # ------------------------------------------------------------
+      # 4. Instalar Buildozer
+      # ------------------------------------------------------------
+      - name: Install Buildozer
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip
           python -m pip install buildozer
-          python -m pip install "Cython==0.29.33"
-          python -m pip install "sh>=2,<3"
+          python -m pip install "cython==0.29.37"
 
-      - name: Set up Android SDK & NDK
+
+      # ------------------------------------------------------------
+      # 5. Aceitar licenças Android
+      # ------------------------------------------------------------
+      - name: Accept Android SDK licenses
         run: |
-          # Força o uso do NDK r25b que é totalmente compatível com Kivy/KivyMD
-          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
-          
-          # Instala o NDK r25b caso não esteja presente
-          sdkmanager --install "ndk;25.2.9519653" "platforms;android-33" "build-tools;33.0.0"
-          
-          echo "ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
 
+          if [ -f "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          fi
+
+
+      # ------------------------------------------------------------
+      # 6. Cache do Buildozer
+      # ------------------------------------------------------------
       - name: Cache Buildozer
         uses: actions/cache@v4
         with:
@@ -61,14 +98,18 @@ jobs:
           restore-keys: |
             buildozer-${{ runner.os }}-
 
+
+      # ------------------------------------------------------------
+      # 7. Construir APK
+      # ------------------------------------------------------------
       - name: Build APK
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
-          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
-          JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
         run: |
           buildozer -v android debug
 
+
+      # ------------------------------------------------------------
+      # 8. Disponibilizar APK
+      # ------------------------------------------------------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
