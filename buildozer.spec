@@ -25,7 +25,7 @@ source.include_exts = py,kv,png,jpg,jpeg,atlas,json,ttf,db
 version = 1.0
 
 # (list) Application requirements
-requirements = python3,kivy==2.3.1,kivymd==2.0.0,materialyoucolor==0.1.5,materialshapes==0.3,asynckivy==0.6.4,asyncgui==0.6.3,pillow
+requirements = python3,kivy==2.3.1,kivymd==2.0.0,materialyoucolor==3.0.4,materialshapes==0.3,asynckivy==0.6.4,asyncgui==0.6.3,pillow
 
 # (str) Supported orientation
 orientation = landscape
