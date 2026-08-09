@@ -22,6 +22,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
+
           sudo apt-get install -y \
             build-essential \
             git \
@@ -31,6 +32,7 @@ jobs:
             autoconf \
             automake \
             libtool \
+            libtool-bin \
             pkg-config \
             libffi-dev \
             libssl-dev \
@@ -39,6 +41,17 @@ jobs:
             libncursesw5-dev \
             cmake \
             ccache
+
+          sudo apt-get install --reinstall -y libtool libtool-bin
+
+          echo "PATH atual:"
+          echo "$PATH"
+
+          echo "Localização do libtool:"
+          command -v libtool
+
+          echo "Versão do libtool:"
+          libtool --version
 
       - name: Verify build tools
         run: |
