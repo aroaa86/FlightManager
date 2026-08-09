@@ -159,6 +159,15 @@ jobs:
           echo "aidl encontrado em: $AIDL"
           "$AIDL" --version || true
 
+      - name: Setup python-for-android
+        run: |
+          mkdir -p .buildozer/android/platform
+          cd .buildozer/android/platform
+          git clone https://github.com/kivy/python-for-android.git
+          cd python-for-android
+          git checkout develop
+          python setup.py develop
+
       - name: Build APK
         run: |
           buildozer android clean
