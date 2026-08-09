@@ -93,16 +93,71 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-34"
-          sdkmanager "build-tools;35.0.0"
+          export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          export ANDROID_SDK_ROOT="$ANDROID_HOME"
+          
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          
+          echo "Procurando sdkmanager..."
+          find "$ANDROID_HOME" -type f -name sdkmanager 2>/dev/null || true
+          
+          SDKMANAGER=$(find "$ANDROID_HOME" -type f -name sdkmanager 2>/dev/null | head -n 1)
+          
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERRO: sdkmanager não foi encontrado."
+            exit 1
+          fi
+          
+          echo "sdkmanager encontrado em: $SDKMANAGER"
+          
+          SDKMANAGER_DIR="$(dirname "$SDKMANAGER")"
+          export PATH="$SDKMANAGER_DIR:$PATH"
+          
+          echo "$SDKMANAGER_DIR" >> "$GITHUB_PATH"
+          
+          "$SDKMANAGER" --version
+          
+          yes | "$SDKMANAGER" --licenses || true
+          
+          "$SDKMANAGER" "platform-tools"
+          "$SDKMANAGER" "platforms;android-34"
+          "$SDKMANAGER" "build-tools;35.0.0"
 
       - name: Verify Android SDK
         run: |
+          export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          export ANDROID_SDK_ROOT="$ANDROID_HOME"
+          
+          SDKMANAGER=$(find "$ANDROID_HOME" -type f -name sdkmanager 2>/dev/null | head -n 1)
+          
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERRO: sdkmanager não encontrado."
+            exit 1
+          fi
+          
+          SDKMANAGER_DIR="$(dirname "$SDKMANAGER")"
+          export PATH="$SDKMANAGER_DIR:$PATH"
+          
           echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "sdkmanager=$SDKMANAGER"
+          
+          "$SDKMANAGER" --version
+          
+          echo "Build-tools:"
           ls -la "$ANDROID_HOME/build-tools"
-          ls -la "$ANDROID_HOME/build-tools/35.0.0"
-          test -x "$ANDROID_HOME/build-tools/35.0.0/aidl"
+          
+          echo "AIDL:"
+          find "$ANDROID_HOME/build-tools" -name aidl -type f -print
+          
+          AIDL=$(find "$ANDROID_HOME/build-tools" -name aidl -type f | head -n 1)
+          
+          if [ -z "$AIDL" ]; then
+            echo "ERRO: aidl não encontrado."
+            exit 1
+          fi
+          
+          echo "aidl encontrado em: $AIDL"
+          "$AIDL" --version || true
 
       - name: Build APK
         run: |
