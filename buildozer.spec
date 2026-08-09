@@ -68,7 +68,7 @@ android.api = 34
 android.ndk = 27b
 
 # (str) Android SDK version
-android.sdk = 34
+# android.sdk = 34
 
 # (str) Android entry point
 android.entrypoint = org.kivy.android.PythonActivity
