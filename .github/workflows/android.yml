@@ -33,11 +33,17 @@ jobs:
             autoconf \
             automake \
             libtool \
+            libtool-bin \
             pkg-config \
             libffi-dev \
             libssl-dev \
             gettext \
             libltdl-dev
+
+          echo "===== Verificando libtool ====="
+          which libtool || true
+          ls -l /usr/bin/libtool || true
+          libtool --version
 
       - name: Install Buildozer and Cython
         run: |
