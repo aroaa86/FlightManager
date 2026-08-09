@@ -12,19 +12,13 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install system dependencies
         run: |
@@ -35,41 +29,45 @@ jobs:
             git \
             zip \
             unzip \
+            openjdk-17-jdk \
             autoconf \
             automake \
             libtool \
-            libtool-bin \
             pkg-config \
-            cmake \
             libffi-dev \
             libssl-dev \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            libtinfo5 \
-            libsqlite3-dev \
-            liblzma-dev \
-            libreadline-dev \
             gettext \
-            autopoint
+            libltdl-dev
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install "cython==0.29.37"
-          python -m pip install "buildozer==1.5.0"
-
-      - name: Show versions
+      - name: Verify environment
         run: |
           python --version
-          pip --version
-          buildozer --version
-          cython --version
+          python -m pip --version
+
+          buildozer --version || true
           autoconf --version
           automake --version
           libtool --version
 
-      - name: Clean Buildozer
+      - name: Install Python build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            buildozer==1.5.0 \
+            Cython==0.29.37
+
+      - name: Install application dependencies
+        run: |
+          python -m pip install \
+            kivy==2.3.1 \
+            kivymd==2.0.0 \
+            materialyoucolor==0.1.5 \
+            materialshapes==0.3 \
+            asynckivy==0.6.4 \
+            asyncgui==0.6.3 \
+            pillow
+
+      - name: Clean previous Buildozer files
         run: |
           rm -rf .buildozer
           rm -rf bin
@@ -78,9 +76,18 @@ jobs:
         run: |
           buildozer -v android debug
 
+      - name: List generated files
+        if: always()
+        run: |
+          echo "===== BIN ====="
+          ls -lah bin || true
+
+          echo "===== BUILD ARTIFACTS ====="
+          find bin -maxdepth 1 -type f -print || true
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: gestordevoo-apk
+          name: Gestor-de-Voo-APK
           path: bin/*.apk
           if-no-files-found: error

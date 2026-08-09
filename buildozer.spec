@@ -1,111 +1,155 @@
 [app]
 
-# ---------------------------------------------------------------------
-# Informações da aplicação
-# ---------------------------------------------------------------------
-
+# (str) Title of your application
 title = Gestor de Voo
 
+# (str) Package name
 package.name = gestordevoo
 
+# (str) Package domain (needed for android/ios packaging)
 package.domain = org.adilson
 
+# (str) Source code where main.py live
 source.dir = .
 
-version = 1.0.0
+# (str) Main Python file
+source.main = main.py
 
-#
-# Ficheiros incluídos no APK
-#
+# (list) List of source files to include
+source.include_exts = py,kv,png,jpg,jpeg,atlas,json,ttf,db
 
-source.include_exts = py,kv,png,jpg,atlas,json,ttf
+# (list) List of inclusions using pattern matching
+#source.include_patterns = assets/*,images/*
 
-#
-# Pastas que NÃO devem entrar no APK
-#
+# (str) Application version
+version = 1.0
 
-source.exclude_dirs = tests,bin,venv,.venv,.git,__pycache__,build,.idea
+# (list) Application requirements
+requirements = python3,kivy==2.3.1,kivymd==2.0.0,materialyoucolor==0.1.5,materialshapes==0.3,asynckivy==0.6.4,asyncgui==0.6.3,pillow
 
-#
-# Requisitos
-#
-
-requirements = python3,kivy,kivymd
-
-#
-# Orientação
-#
-
+# (str) Supported orientation
 orientation = landscape
 
-#
-# Tela cheia
-#
-
+# (bool) Fullscreen mode
 fullscreen = 1
 
-#
-# Ícone (adicionar futuramente)
-#
-
-#icon.filename = icon.png
 
 #
-# Splash Screen (adicionar futuramente)
+# OSX Specific
 #
 
-#presplash.filename = presplash.png
+# author = © Copyright Info
+# license = MIT
 
 
+#
+# Android specific
+#
 
-# ---------------------------------------------------------------------
-# Android
-# ---------------------------------------------------------------------
+# (bool) Indicate if the application should be fullscreen or not
+# fullscreen = 1
 
-# Aceitar todas as licenças do Android SDK automaticamente
-android.accept_sdk_license = True
-android.skip_update = False
+# (string) Presplash of the application
+# presplash.filename = %(source.dir)s/data/presplash.png
 
-android.api = 34
+# (string) Icon of the application
+# icon.filename = %(source.dir)s/data/icon.png
 
-android.minapi = 24
-
-android.ndk = 27b
-
-android.ndk_api = 24
-
+# (str) Supported architectures
 android.archs = arm64-v8a
 
-android.allow_backup = True
+# (int) Minimum API required
+android.minapi = 24
 
+# (int) Android API to use
+android.api = 34
+
+# (str) Android NDK version
+android.ndk = 27b
+
+# (str) Android SDK version
+android.sdk = 34
+
+# (str) Android entry point
+android.entrypoint = org.kivy.android.PythonActivity
+
+# (bool) Enable AndroidX
 android.enable_androidx = True
 
-android.debug_artifact = apk
+# (bool) Use Android appcompat
+android.add_androidx = True
 
-android.release_artifact = apk
+# (str) Android app theme
+android.apptheme = @android:style/Theme.Material.Light.NoActionBar
 
-android.build_tools_version = 35.0.0
+# (list) List of Java .jar files to add
+#android.add_jars = foo.jar
+
+# (list) List of Java files to add
+#android.add_src =
+
+# (list) Android AAR files to add
+#android.add_aars =
+
+# (list) Gradle dependencies
+#android.gradle_dependencies =
+
+# (str) Android NDK path
+#android.ndk_path =
+
+# (str) Android SDK path
+#android.sdk_path =
+
+# (str) Android entry point
+#android.entrypoint = org.kivy.android.PythonActivity
+
+# (str) Android activity class name
+#android.activity_class_name = org.kivy.android.PythonActivity
+
+# (str) Android app name
+#android.app_name = %(title)s
+
+# (bool) Indicate whether the app should be built in debug mode
+android.debug = 1
+
 
 #
-# Sem permissões por enquanto
+# Python-for-Android specific
 #
 
-android.permissions =
+# (str) Python-for-Android branch to use
+#p4a.branch = develop
+
+# (str) Python-for-Android URL
+#p4a.url =
+
+# (str) Python-for-Android commit
+#p4a.commit =
+
+# (str) Python-for-Android directory
+#p4a.source_dir =
+
+# (str) Python-for-Android extra arguments
+#p4a.extra_args =
+
 
 #
-# Armazenamento privado
+# iOS Specific
 #
 
-android.private_storage = True
+# (str) Name of the certificate
+#ios.codesign.allowed = false
+
+# (str) Path to the certificate
+#ios.codesign.debug =
 
 
+#
+# Buildozer release
+#
 
-# ---------------------------------------------------------------------
-# Buildozer
-# ---------------------------------------------------------------------
-
-[buildozer]
-
+# (str) Buildozer log level
 log_level = 2
 
+# (str) Warn on deprecated options
 warn_on_root = 1
