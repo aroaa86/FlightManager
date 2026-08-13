@@ -136,58 +136,6 @@ jobs:
 
           "$SDKMANAGER" --version
 
-      - name: Accept Android SDK licenses
-        shell: bash
-        run: |
-          yes | "$SDKMANAGER" --licenses || true
-
-          mkdir -p "$ANDROID_HOME/licenses"
-
-          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" \
-            > "$ANDROID_HOME/licenses/android-sdk-license"
-
-          echo "84831b9409646a918e30573bab4c9c91346d8abd" \
-            >> "$ANDROID_HOME/licenses/android-sdk-license"
-
-          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" \
-            >> "$ANDROID_HOME/licenses/android-sdk-license"
-
-      - name: Install Android SDK packages
-        shell: bash
-        run: |
-          "$SDKMANAGER" "platform-tools"
-          "$SDKMANAGER" "platforms;android-34"
-          "$SDKMANAGER" "build-tools;35.0.0"
-
-      - name: Verify Android SDK
-        shell: bash
-        run: |
-          echo "===== ANDROID SDK ====="
-          echo "ANDROID_HOME=$ANDROID_HOME"
-
-          echo "===== BUILD TOOLS ====="
-          ls -la "$ANDROID_HOME/build-tools"
-
-          echo "===== AIDL ====="
-          find "$ANDROID_HOME/build-tools" \
-            -type f \
-            -name aidl \
-            -print
-
-          AIDL=$(find "$ANDROID_HOME/build-tools" \
-            -type f \
-            -name aidl | head -n 1)
-
-          if [ -z "$AIDL" ]; then
-            echo "ERRO: aidl não encontrado."
-            exit 1
-          fi
-
-          echo "AIDL encontrado:"
-          echo "$AIDL"
-
-          "$AIDL" --version || true
-
       - name: Build APK
         shell: bash
         run: |

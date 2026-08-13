@@ -82,6 +82,8 @@ android.add_androidx = True
 # (str) Android app theme
 android.apptheme = @android:style/Theme.Material.Light.NoActionBar
 
+android.accept_sdk_license = True
+
 # (list) List of Java .jar files to add
 #android.add_jars = foo.jar
 
