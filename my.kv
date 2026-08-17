@@ -1,6 +1,5 @@
 #:import dp kivy.metrics.dp
 
-
 <Button>:
     font_size: '17sp'
     color: 0.3, 0.6, 0.7, 1
@@ -102,7 +101,6 @@ WindowManager:
 
             Label:
                 text: "AD de partida"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -110,11 +108,10 @@ WindowManager:
                 font_size: '20sp'
                 multiline: False
                 hint_text: "Ex.: fnlu"
-                padding: dp(10), (self.height-self.line_height)/2
+                padding: dp(10), (self.height-self.line_height)/2 # alinha o hint text no meio do input
 
             Label:
                 text: "AD de chegada"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -126,7 +123,6 @@ WindowManager:
 
             Label:
                 text: "Nível de voo"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -138,7 +134,6 @@ WindowManager:
 
             Label:
                 text: "Radial/Rumo"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -150,7 +145,6 @@ WindowManager:
 
             Label:
                 text: "Alt. transição"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -162,7 +156,6 @@ WindowManager:
 
             Label:
                 text: "Niv. transição"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -174,7 +167,6 @@ WindowManager:
 
             Label:
                 text: "MEA"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -186,7 +178,6 @@ WindowManager:
 
             Label:
                 text: "MSA"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -198,7 +189,6 @@ WindowManager:
 
             Label:
                 text: "Aeronave"
-                halign: 'left'
                 text_size: self.size
 
             TextInput:
@@ -209,10 +199,8 @@ WindowManager:
                 padding: dp(10), (self.height-self.line_height)/2
 
         BoxLayout:
-            orientation: 'horizontal'
-            spacing: dp(20)
+            spacing: dp(12)
             size_hint_y: 0.12
-            padding: dp(10)
 
             Button:
                 text: "Voltar"
@@ -271,16 +259,22 @@ WindowManager:
                 orientation: 'horizontal'
                 spacing: dp(5)
 
+                Label:
+                    id: lista
+                    text: "Tempo"
+                    size_hint_x: 0.20
+
                 TextInput:
                     id: estima
                     font_size: '20sp'
                     multiline: False
-                    hint_text: "Min."
+                    hint_text: "Ex.: 40"
                     padding: dp(10), (self.height-self.line_height)/2
 
                 Button:
                     text: "+"
-                    size_hint_x: 0.35
+                    size_hint_x:  None
+                    height: dp(32)
                     on_release:
                         root.add_waypoint()
 
@@ -294,16 +288,14 @@ WindowManager:
                     id: box
                     cols: 1
                     orientation: 'lr-tb'
-                    spacing: dp(5)
-                    padding: dp(5)
+                    spacing: dp(8)
+                    padding: dp(8)
                     size_hint_y: None
                     height: self.minimum_height
 
         BoxLayout:
-            orientation: 'horizontal'
-            spacing: dp(20)
-            size_hint_y: 0.12
-            padding: dp(10)
+            spacing: dp(12)
+            spacing: dp(12)
 
             Button:
                 text: "Voltar"
@@ -330,9 +322,7 @@ WindowManager:
     descolagem: descolagem
     aterragem: aterragem
     corte: corte
-
     rota: rota
-
     min_enrout: min_enrout
     flt_level: flt_level
     min_sec: min_sec
@@ -351,7 +341,6 @@ WindowManager:
 
     FloatLayout:
 
-
         # ======================================================
         # ROTA
         # ======================================================
@@ -359,17 +348,12 @@ WindowManager:
         Label:
             id: rota
             text: ''
-
             size_hint: 0.90, 0.08
-            pos_hint:{"center_x": 0.65, "top": 0.98}
-
+            pos_hint:{"center_x": 0.62, "top": 0.94}
             font_size: '32sp'
-
             halign: 'center'
             valign: 'middle'
-
             text_size: self.size
-
 
         # ======================================================
         # COLUNA 1
@@ -379,12 +363,9 @@ WindowManager:
 
         BoxLayout:
             orientation: 'vertical'
-
             size_hint: 0.42, 0.55
             pos_hint:{"x": 0.03, "top": 0.86}
-
             spacing: '8dp'
-
 
             # --------------------------------------------------
             # START
@@ -392,29 +373,20 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'horizontal'
-
                 size_hint_y: 0.25
-
                 spacing: '8dp'
-
 
                 Button:
                     id: arranque
                     text: "START"
-
                     size_hint_x: 0.58
-
                     on_release:
                         root.hora_start()
 
-
                 BoxLayout:
                     id: box2
-
                     orientation: 'vertical'
-
                     size_hint_x: 0.42
-
 
             # --------------------------------------------------
             # DESCOLAGEM
@@ -422,29 +394,20 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'horizontal'
-
                 size_hint_y: 0.25
-
                 spacing: '8dp'
-
 
                 Button:
                     id: descolagem
                     text: "DESCOLAGEM"
-
                     size_hint_x: 0.58
-
                     on_release:
                         root.hora_descolagem()
 
-
                 BoxLayout:
                     id: box2_1
-
                     orientation: 'vertical'
-
                     size_hint_x: 0.42
-
 
             # --------------------------------------------------
             # ATERRAGEM
@@ -452,29 +415,20 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'horizontal'
-
                 size_hint_y: 0.25
-
                 spacing: '8dp'
-
 
                 Button:
                     id: aterragem
                     text: "ATERRAGEM"
-
                     size_hint_x: 0.58
-
                     on_release:
                         root.hora_aterragem()
 
-
                 BoxLayout:
                     id: box2_2
-
                     orientation: 'vertical'
-
                     size_hint_x: 0.42
-
 
             # --------------------------------------------------
             # CORTE
@@ -482,29 +436,20 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'horizontal'
-
                 size_hint_y: 0.25
-
                 spacing: '8dp'
-
 
                 Button:
                     id: corte
                     text: "CORTE"
-
                     size_hint_x: 0.58
-
                     on_release:
                         root.hora_corte()
 
-
                 BoxLayout:
                     id: box2_3
-
                     orientation: 'vertical'
-
                     size_hint_x: 0.42
-
 
         # ======================================================
         # COLUNA 2
@@ -516,12 +461,9 @@ WindowManager:
 
         BoxLayout:
             orientation: 'vertical'
-
             size_hint: 0.28, 0.55
             pos_hint:{"x": 0.40, "top": 0.86}
-
             spacing: '5dp'
-
 
             # --------------------------------------------------
             # DADOS DO VOO
@@ -529,95 +471,64 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'vertical'
-
                 size_hint_y: 0.72
-
                 spacing: '2dp'
-
 
                 Label:
                     id: hdg
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: flt_level
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: min_enrout
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: min_sec
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: via
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: alt_trans
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
                 Label:
                     id: niv_trans
                     text: ''
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
             # --------------------------------------------------
             # HORA DE VOO
@@ -625,26 +536,17 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'vertical'
-
                 size_hint_y: 0.28
-
                 spacing: '2dp'
-
 
                 Label:
                     id: fltime
-
                     text: ''
-
                     size_hint_y: 0.60
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
         # ======================================================
         # COLUNA 3
@@ -656,12 +558,9 @@ WindowManager:
 
         BoxLayout:
             orientation: 'vertical'
-
             size_hint: 0.22, 0.55
             pos_hint:{"x": 0.70, "top": 0.86}
-
             spacing: '5dp'
-
 
             # --------------------------------------------------
             # TÍTULO ESTIMAS
@@ -669,16 +568,11 @@ WindowManager:
 
             Label:
                 text: 'ESTIMAS'
-
                 size_hint_y: 0.12
-
                 font_size: '18sp'
-
                 halign: 'center'
                 valign: 'middle'
-
                 text_size: self.size
-
 
             # --------------------------------------------------
             # SCROLLVIEW DAS ESTIMAS
@@ -686,25 +580,17 @@ WindowManager:
 
             ScrollView:
                 size_hint_y: 0.68
-
                 do_scroll_x: False
                 do_scroll_y: True
-
                 bar_width: '6dp'
-
 
                 GridLayout:
                     id: cx
-
                     cols: 1
-
                     spacing: '5dp'
                     padding: '5dp'
-
                     size_hint_y: None
-
                     height: self.minimum_height
-
 
             # --------------------------------------------------
             # HORA BLOCO
@@ -712,26 +598,17 @@ WindowManager:
 
             BoxLayout:
                 orientation: 'vertical'
-
                 size_hint_y: 0.32
-
                 spacing: '2dp'
-
 
                 Label:
                     id: blktime
-
                     text: ''
-
                     size_hint_y: 0.60
-
                     font_size: '17sp'
-
                     halign: 'left'
                     valign: 'middle'
-
                     text_size: self.size
-
 
         # ======================================================
         # BOTÕES INFERIORES
@@ -739,20 +616,15 @@ WindowManager:
 
         BoxLayout:
             orientation: 'horizontal'
-
             size_hint: 0.42, 0.09
             pos_hint:{"x": 0.03, "y": 0.04}
-
             spacing: '12dp'
-
 
             Button:
                 text: "INÍCIO"
-
                 on_release:
                     app.root.current = "Flight Plan"
                     root.manager.transition.direction = "right"
-
                     root.ids.box2.clear_widgets()
                     root.ids.box2_1.clear_widgets()
                     root.ids.box2_2.clear_widgets()
@@ -762,7 +634,6 @@ WindowManager:
 
             Button:
                 text: "FECHAR"
-
                 on_release:
                     app.root.get_screen('Flight Plan').sair(root)
 
@@ -854,7 +725,8 @@ WindowManager:
 
     Button:
         text: "x"
-        size_hint_x: 0.15
+        size_hint_x: None
+        width: dp(50)
         on_release:
             app.root.get_screen('Waypoints').remover_waypoint(root)
 
