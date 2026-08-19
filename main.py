@@ -17,7 +17,7 @@ from kivy.metrics import dp
 import datetime as dt
 from kivymd.theming import ThemeManager
 import sqlite3
-import time
+from kivy.utils import platform
 import platform
 
 
@@ -30,9 +30,11 @@ def mostrar_mensagem(mensagem, duration=3):
     # ======================================================
     # ANDROID
     # ======================================================
-    if platform.system() == "Android":
+    if platform == "android":
         try:
+            from android.runnable import run_on_ui_thread
             from jnius import autoclass
+
             Toast = autoclass("android.widget.Toast")
             PythonActivity = autoclass("org.kivy.android.PythonActivity")
             activity = PythonActivity.mActivity
@@ -41,8 +43,18 @@ def mostrar_mensagem(mensagem, duration=3):
                 duracao_android = Toast.LENGTH_LONG
             else:
                 duracao_android = Toast.LENGTH_SHORT
-            Toast.makeText(activity, str(mensagem), duracao_android).show()
+
+            @run_on_ui_thread
+            def apresentar_toast():
+                Toast.makeText(
+                    activity,
+                    str(mensagem),
+                    duracao_android
+                ).show()
+
+            apresentar_toast()
             return
+
         except Exception as erro:
             print("Erro ao apresentar mensagem Android:", erro)
 
