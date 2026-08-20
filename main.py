@@ -55,8 +55,10 @@ def mostrar_mensagem(mensagem, duration=3):
             apresentar_toast()
             return
 
+
         except Exception as erro:
-            print("Erro ao apresentar mensagem Android:", erro)
+
+            print("ERRO TOAST ANDROID:", repr(erro))
 
     # ======================================================
     # WINDOWS / DESKTOP
@@ -918,8 +920,8 @@ class MostraProcura(BoxLayout):
         self.bd.inserir_tbl_voo(
             self.ids.partida.text,
             self.ids.chegada.text,
-            self.ids.radial.text,
             self.ids.nivel_v.text,
+            self.ids.radial.text,
             self.ids.nivel_t.text,
             self.ids.alt_t.text,
             self.ids.msa.text,
